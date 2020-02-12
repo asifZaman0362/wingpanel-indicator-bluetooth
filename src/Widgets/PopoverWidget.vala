@@ -75,6 +75,7 @@ public class BluetoothIndicator.Widgets.PopoverWidget : Gtk.Box {
         });
 
         main_switch.notify["active"].connect (() => {
+        	rfkill(main_switch.active);
             object_manager.set_global_state.begin (main_switch.active);
         });
 
@@ -160,5 +161,15 @@ public class BluetoothIndicator.Widgets.PopoverWidget : Gtk.Box {
         device_widget.show_device.connect ((device_service) => {
             device_requested (device_service);
         });
+    }
+
+    private async void rfkill(bool active) {
+    	string command = "rfkill unblock bluetooth";
+    	if (!active) command = "rfkill block bluetooth";
+    	try {
+    		Process.spawn_command_line_async(command);
+    	} catch (SpawnError e) {
+    	    warning("Error: %s\n", e.message);
+    	}
     }
 }

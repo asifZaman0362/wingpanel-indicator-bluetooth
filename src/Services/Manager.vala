@@ -189,7 +189,14 @@ public class BluetoothIndicator.Services.ObjectManager : Object {
 
     public async void set_global_state (bool state) {
         /* `is_powered` and `connected` properties will be set by the check_global state () callback when adapter or device
-         * properties change.  Do not set now so that global_state_changed signal will be emitted. */
+         * properties change.  Do not set now so that global_state_changed signal will be emitted.
+
+		if (state == true) {
+		    Process.spawn_command_line_sync("rfkill unblock bluetooth");
+    	}
+    	else {
+    	    Process.spawn_command_line_sync("rfkill block bluetooth");
+        }*/
 
         lock (adapters) {
             foreach (var adapter in adapters.values) {
@@ -210,7 +217,6 @@ public class BluetoothIndicator.Services.ObjectManager : Object {
                 }
             }
         }
-
         settings.set_boolean ("bluetooth-enabled", state);
     }
 
